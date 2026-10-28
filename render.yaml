@@ -1,0 +1,38 @@
+# Render Blueprint for the Blockroom Telegram bot.
+# Deploy with:  Render dashboard -> New -> Blueprint -> point at this repo.
+# Secrets marked `sync: false` are filled in via the Render dashboard.
+
+services:
+  - type: web
+    name: blockroom-bot
+    runtime: python
+    plan: starter          # use "free" to try it out (cold starts after idle)
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn live:app --workers 2 --threads 8 --timeout 120 --bind 0.0.0.0:$PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_WEBHOOK_SECRET
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: FIREBASE_BACKEND
+        value: "firestore"
+      # - key: FIREBASE_RTDB_URL
+      #   sync: false
+      # - key: FIREBASE_COLLECTION_PREFIX
+      #   sync: false
+      - key: MINI_APP_URL
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: AUTO_SET_WEBHOOK
+        value: "true"
+      - key: LOG_LEVEL
+        value: "INFO"
